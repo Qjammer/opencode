@@ -816,6 +816,13 @@ export const { use: useData, provider: DataProvider } = createSimpleContext({
             const currentAssistant = message.activeAssistant(draft)
             if (currentAssistant) currentAssistant.retry = undefined
           })
+          if (event.type === "session.execution.interrupted" && event.data.reason === "shutdown") break
+          result.session.invalidate(event.data.sessionID)
+          void result.session.sync(event.data.sessionID)
+          break
+        case "session.viewed":
+          result.session.invalidate(event.data.sessionID)
+          void result.session.sync(event.data.sessionID)
           break
         case "session.revert.staged":
           if (store.session.info[event.data.sessionID])
