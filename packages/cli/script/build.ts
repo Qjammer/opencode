@@ -102,6 +102,8 @@ for (const item of targets) {
   const name = target.replace(binary, "cli")
   const executablePath = await compileExecutable(item)
   console.log(`building ${name}`)
+  const compileExecutableOption = executablePath === undefined ? {} : { executablePath }
+
   const result = await Bun.build({
     entrypoints: ["./src/index.ts"],
     tsconfig: "./tsconfig.json",
@@ -117,7 +119,7 @@ for (const item of targets) {
       autoloadTsconfig: true,
       autoloadPackageJson: true,
       target: target.replace(binary, "bun") as Bun.Build.CompileTarget,
-      executablePath,
+      ...compileExecutableOption,
       outfile: path.join(outdir, name, "bin", binary),
       execArgv: [`--user-agent=${binary}/${Script.version}`, "--use-system-ca", "--"],
       windows: {},
